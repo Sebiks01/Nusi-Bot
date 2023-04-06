@@ -1,10 +1,10 @@
-const { ChatInputCommandInteraction, Client } = require('discord.js');
+const { ChatInputCommandInteraction, Client, Events } = require('discord.js');
 
 const msg = require('../../config/messages.js')
 
 // Event object
 module.exports = {
-  name: 'interactionCreate',
+  name: Events.InteractionCreate,
 
   /**
    *
