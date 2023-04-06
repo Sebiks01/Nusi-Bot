@@ -6,7 +6,7 @@ const {
 } = require('discord.js');
 
 const recruitmentModsSchema = require('../../schemas/recruitmentMods');
-const embed = require('../../config/embeds');
+const embed = require('../../config/embedsAndComponents.js');
 const msg = require('../../config/messages');
 
 // Command object
@@ -45,10 +45,12 @@ module.exports = {
    */
 
   async execute(interaction, _) {
+    if (!interaction.guild) return;
+
     const sub = interaction.options.getSubcommand();
     const role = interaction.options.getRole('role');
 
-    await interaction.deferReply();
+    await interaction.deferReply({ ephemeral: true });
     const result = await recruitmentModsSchema.findOne({ roleId: role.id });
 
     try {
@@ -56,7 +58,7 @@ module.exports = {
         case 'add': {
           if (result)
             return await interaction.editReply({
-              content: 'do zmiany (rola jest juz w bazie)',
+              embeds: [embed.pub_cmds.recruitment_mod_already_added],
               ephemeral: true,
             });
 
@@ -72,7 +74,7 @@ module.exports = {
         case 'remove': {
           if (!result)
             return await interaction.editReply({
-              content: 'do zmiany (nie ma roli w bazie)',
+              embeds: [embed.pub_cmds.recruitment_mod_not_found],
               ephemeral: true,
             });
 

@@ -6,8 +6,9 @@ const {
   ChannelType,
 } = require('discord.js');
 
+const recruitmentChannelSchema = require('../../schemas/recruitmentChannel.js');
 const recruitmentMessagesSchema = require('../../schemas/recruitmentMessages');
-const embed = require('../../config/embeds');
+const embed = require('../../config/embedsAndComponents.js');
 const msg = require('../../config/messages');
 
 // Command object
@@ -31,11 +32,19 @@ module.exports = {
    */
 
   async execute(interaction, _) {
+    if (!interaction.guild) return;
+
     const channel = interaction.options.getChannel('channel');
 
-    await interaction.deferReply();
+    await interaction.deferReply({ ephemeral: true });
 
     try {
+      if (!(await recruitmentChannelSchema.findOne()))
+        return interaction.editReply({
+          content: 'Musisz najpierw dodac kanal podan (do zmiany)',
+          ephemeral: true,
+        });
+
       const message = await channel.send({
         embeds: [embed.pub_cmds.recruitment_embed_init],
         components: [embed.pub_cmds.recruitment_row_init],

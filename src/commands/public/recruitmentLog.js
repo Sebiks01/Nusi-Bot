@@ -7,7 +7,7 @@ const {
 } = require('discord.js');
 
 const recruitmentLogSchema = require('../../schemas/recruitmentLog');
-const embed = require('../../config/embeds');
+const embed = require('../../config/embedsAndComponents.js');
 const msg = require('../../config/messages');
 
 // Command object
@@ -31,9 +31,11 @@ module.exports = {
    */
 
   async execute(interaction, _) {
+    if (!interaction.guild) return;
+
     const channel = interaction.options.getChannel('channel');
 
-    await interaction.deferReply();
+    await interaction.deferReply({ ephemeral: true });
 
     try {
       if (!channel) {
@@ -56,7 +58,7 @@ module.exports = {
       }
 
       await interaction.editReply({
-        content: 'do zmiany (ustawiono kanal logow)',
+        embeds: [embed.pub_cmds.recruitment_log_setchannel],
         ephemeral: true,
       });
     } catch (err) {

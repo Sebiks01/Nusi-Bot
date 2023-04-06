@@ -6,7 +6,7 @@ const {
 } = require('discord.js');
 
 const recruitmentMessagesSchema = require('../../schemas/recruitmentMessages');
-const embed = require('../../config/embeds');
+const embed = require('../../config/embedsAndComponents.js');
 const msg = require('../../config/messages');
 
 // Command object
@@ -30,10 +30,12 @@ module.exports = {
    */
 
   async execute(interaction, _) {
+    if (!interaction.guild) return;
+
     const status = interaction.options.getString('status');
     const { guild } = interaction;
 
-    await interaction.deferReply();
+    await interaction.deferReply({ ephemeral: true });
 
     try {
       const results = await recruitmentMessagesSchema.find();
@@ -41,8 +43,11 @@ module.exports = {
       switch (status) {
         case 'on': {
           for (const { channelId, messageId } of results) {
-            const channel = await guild.channels.fetch(channelId);
-            if (!channel) {
+            let channel, message;
+
+            try {
+              channel = await guild.channels.fetch(channelId);
+            } catch {
               await recruitmentMessagesSchema.deleteOne({
                 channelId: channelId,
                 messageId: messageId,
@@ -50,8 +55,9 @@ module.exports = {
               continue;
             }
 
-            const message = await channel.messages.fetch(messageId);
-            if (!message) {
+            try {
+              message = await channel.messages.fetch(messageId);
+            } catch {
               await recruitmentMessagesSchema.deleteOne({
                 channelId: channelId,
                 messageId: messageId,
