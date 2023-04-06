@@ -1,11 +1,11 @@
-const { Client } = require('discord.js');
+const { Client, Events } = require('discord.js');
 
 const msg = require('../../config/messages.js')
 const { loadCommands } = require('../../handlers/commandsHandler.js');
 
 // Event object
 module.exports = {
-  name: 'ready',
+  name: Events.ClientReady,
   once: true,
 
   /**
