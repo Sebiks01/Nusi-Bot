@@ -12,10 +12,14 @@ module.exports = {
         /* -------------------------- recruitmentMod.js ------------------------- */
         recruitment_mod_err: chalk.yellow('[WARN] Error in the "recruitment-mod" command.'),
 
-        /* -------------------------- recruitmentMod.js ------------------------- */
+        /* -------------------------- recruitmentToggle.js ------------------------- */
         recruitment_toggle_err: chalk.yellow('[WARN] Error in the "recruitment-toggle" command.'),
 
-        recruitment_log_err: chalk.yellow('[WARN] Error in the "recruitment-log" command.')
+        /* ---------------------------- recruitmentLog.js --------------------------- */
+        recruitment_log_err: chalk.yellow('[WARN] Error in the "recruitment-log" command.'),
+
+        /* -------------------------- recruitmentChannel.js ------------------------- */
+        recruitment_channel_err: chalk.yellow('[WARN] Error in the "recruitment-channel" command.')
     },
 
     util_cmds: {
