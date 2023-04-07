@@ -45,6 +45,18 @@ module.exports = {
         '📝'
       ).setLabel('KLIKNIJ ABY NAPISAĆ PODANIE'),
     ]),
+    no_recruitment_channel: createEmbed(
+      '⛔️ BŁĄD',
+      'Kanał nie został utworzony lub został on usunięty! Nie można wysłać formularza!',
+      0xff0707
+    ),
+    sent_recruitment_message_reply: createEmbed(
+      'REKRUTACJA',
+      'Formularz rekrutacji został pomyślnie wysłany!',
+      0x03df03
+    ).setThumbnail(
+      'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=699&height=675'
+    ),
 
     /* ---------------------------- recruitmentMod.js --------------------------- */
     recruitment_mod_add_success: createEmbed(
@@ -70,6 +82,28 @@ module.exports = {
       0xf10303
     ).setThumbnail(
       'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=700&height=676'
+    ),
+
+    /* ---------------------------- recruitmentBlacklist.js --------------------------- */
+    recruitment_blacklist_add_success: createEmbed(
+      'REKRUTACJA',
+      'Rola została dodana do czarnej listy do rekrutacji!`',
+      0x12e507
+    ),
+    recruitment_blacklist_remove_success: createEmbed(
+      'REKRUTACJA',
+      'Rola została usunięta z czarnej listy do rekrutacji!',
+      0xff0707
+    ),
+    recruitment_blacklist_already_added: createEmbed(
+      '⛔️ BŁĄD',
+      'Rola jest już ustawiona! Aby zmienić rolę na początku musisz ją usunąć!',
+      0xff0707
+    ),
+    recruitment_blacklist_not_found: createEmbed(
+      '⛔️ BŁĄD',
+      'Rola nie została znaleziona w bazie danych!',
+      0xff0707
     ),
 
     /* -------------------------- recruitmentToggle.js -------------------------- */
@@ -104,6 +138,13 @@ module.exports = {
       0xe7b707
     ).setThumbnail(
       'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=700&height=676'
+    ),
+
+    /* -------------------------- recruitmentChannel.js ------------------------- */
+    recruitment_channel_set: createEmbed(
+      'KANAŁ PODAŃ',
+      'Pomyślnie ustawiono kanał publicznych podań!',
+      0x16e532
     ),
   },
 
@@ -148,6 +189,11 @@ module.exports = {
           'DZIĘKI ZA TĄ INFORMACJE, CZEKAM!'
         ),
       ]),
+      missing_recruitment_channel: createEmbed(
+        '⛔️ BŁĄD',
+        'Kanał nie został utworzony lub został on usunięty! Nie można wysłać formularza!',
+        0xff0707
+      ),
 
       /* ------------------------------ formAccept.js ----------------------------- */
 
@@ -189,10 +235,24 @@ module.exports = {
       ]),
       reject_reply: createEmbed(
         '❌ PODANIE ODRZUCONE',
-        'Podanie gracza @PINGGRACZA zostało odrzucone!',
+        'Podanie gracza {USER_TAG} zostało odrzucone!',
         0xf10303
       ).setThumbnail(
         'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=700&height=676'
+      ),
+    },
+
+    buttons: {
+      /* ------------------------- recruitmentFormInit.js ------------------------- */
+      form_already_submitted: createEmbed(
+        '⛔️ BŁĄD',
+        'Nie możesz wysłać podania ponieważ już wysłałeś podanie do zatwierdzenia! Kolejne podanie będziesz mógł napisać gdy twoje podanie zostanie odrzucone/zaatwierdzone!',
+        0xff0707
+      ),
+      user_blacklisted: createEmbed(
+        '⛔️ BŁĄD',
+        'Nie możesz napisać podania ponieważ jesteś na blackliście!',
+        0xed0b0b
       ),
     },
   },

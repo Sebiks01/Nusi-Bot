@@ -12,6 +12,9 @@ module.exports = {
         /* -------------------------- recruitmentMod.js ------------------------- */
         recruitment_mod_err: chalk.yellow('[WARN] Error in the "recruitment-mod" command.'),
 
+        /* -------------------------- recruitmentBlacklist.js ------------------------- */
+        recruitment_blacklist_err: chalk.yellow('[WARN] Error in the "recruitment-blacklist" command.'),
+
         /* -------------------------- recruitmentToggle.js ------------------------- */
         recruitment_toggle_err: chalk.yellow('[WARN] Error in the "recruitment-toggle" command.'),
 
@@ -19,7 +22,17 @@ module.exports = {
         recruitment_log_err: chalk.yellow('[WARN] Error in the "recruitment-log" command.'),
 
         /* -------------------------- recruitmentChannel.js ------------------------- */
-        recruitment_channel_err: chalk.yellow('[WARN] Error in the "recruitment-channel" command.')
+        recruitment_channel_err: chalk.yellow('[WARN] Error in the "recruitment-channel" command.'),
+
+        /* -------------------------- recruitmentManage.js -------------------------- */
+        accept_reason_autocomplete: ['Twoje podanie zostało zaakceptowane, zgłoś się w tickecie w celu przeprowadzenia 2 etapu'],
+        reject_reason_autocomplete: ['Nie spełniasz wymagań.', 'Podanie posiada błędy ortograficzne.', 'Byłeś zbyt często karany.'],
+        db_form_not_found: chalk.yellow('[WARN] Error in "recruitmentManage.js". Form not found in databse.'),
+        form_channel_not_found: chalk.yellow('[WARN] Error in "recruitmentManage.js". Form channel not found.'),
+        form_message_not_found: chalk.yellow('[WARN] Error in "recruitmentManage.js". Form message not found.'),
+        db_log_channel_not_found: chalk.yellow('[WARN] Error in "recruitmentManage.js". Log channel not found in databse.'),
+        log_channel_not_found: chalk.yellow('[WARN] Error in "recruitmentManage.js". Log channel not found.'),
+        user_send_err: chalk.yellow('[WARN] Error in "recruitmentManage.js". Cant send message to user.')
     },
 
     util_cmds: {
@@ -43,7 +56,18 @@ module.exports = {
         interactions: {
             /* ---------------------------- slashCommands.js ---------------------------- */
             outdated_cmd: 'This command is outdated.',
-            dev_only_cmd: 'This command is only available to the developer.'
+            dev_only_cmd: 'This command is only available to the developer.',
+            outdated_cmd_log: chalk.yellow('[WARN] Command {CMD_NAME} is outdated.'), // Placeholders: {CMD_NAME} - Command name
+
+            modalSubmits: {
+                /* ---------------------- formAccept.js & formReject.js --------------------- */
+                db_form_not_found: chalk.yellow('[WARN] Error in "formAccept.js/formReject.js". Form not found in databse.'),
+                form_channel_not_found: chalk.yellow('[WARN] Error in "formAccept.js/formReject.js". Form channel not found.'),
+                form_message_not_found: chalk.yellow('[WARN] Error in "formAccept.js/formReject.js". Form message not found.'),
+                db_log_channel_not_found: chalk.yellow('[WARN] Error in "formAccept.js/formReject.js". Log channel not found in databse.'),
+                log_channel_not_found: chalk.yellow('[WARN] Error in "formAccept.js/formReject.js". Log channel not found.'),
+                user_send_err: chalk.yellow('[WARN] Error in "formAccept.js/formReject.js". Cant send message to user.')
+            }
         }
     },
 
