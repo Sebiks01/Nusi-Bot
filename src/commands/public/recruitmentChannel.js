@@ -31,7 +31,7 @@ module.exports = {
    */
 
   async execute(interaction, _) {
-    if (!interaction.guild) return
+    if (!interaction.guild) return;
 
     const channel = interaction.options.getChannel('channel');
 
@@ -50,7 +50,7 @@ module.exports = {
       );
 
       await interaction.editReply({
-        content: 'do zmiany (ustawiono kanal podan)',
+        embeds: [embed.pub_cmds.recruitment_channel_set],
         ephemeral: true,
       });
     } catch (err) {

@@ -41,7 +41,7 @@ module.exports = {
     try {
       if (!(await recruitmentChannelSchema.findOne()))
         return interaction.editReply({
-          content: 'Musisz najpierw dodac kanal podan (do zmiany)',
+          embeds: [embed.pub_cmds.no_recruitment_channel],
           ephemeral: true,
         });
 
@@ -56,7 +56,7 @@ module.exports = {
       });
 
       await interaction.editReply({
-        content: 'Wyslano wiad rekru! (do zmiany)',
+        embeds: [embed.pub_cmds.sent_recruitment_message_reply],
         ephemeral: true,
       });
     } catch (err) {
