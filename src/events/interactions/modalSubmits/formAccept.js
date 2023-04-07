@@ -8,6 +8,7 @@ const {
 const recruitmentLogSchema = require('../../../schemas/recruitmentLog.js');
 const formsSchema = require('../../../schemas/forms.js');
 const embed = require('../../../config/embedsAndComponents.js');
+const msg = require('../../../config/messages.js');
 
 module.exports = {
   name: Events.InteractionCreate,
@@ -41,7 +42,9 @@ module.exports = {
         ephemeral: true,
       });
 
-      return console.log('Nie znaleziono podania w bazie (dz)');
+      return console.log(
+        msg.events.interactions.modalSubmits.db_form_not_found
+      );
     }
 
     let formChannel, formMessage;
@@ -54,7 +57,9 @@ module.exports = {
         ephemeral: true,
       });
 
-      return console.log('Nie znaleziono kanału podania (dz)');
+      return console.log(
+        msg.events.interactions.modalSubmits.form_channel_not_found
+      );
     }
 
     try {
@@ -65,13 +70,15 @@ module.exports = {
         ephemeral: true,
       });
 
-      return console.log('Nie znaleziono wiadomosci podania (dz)');
+      return console.log(
+        msg.events.interactions.modalSubmits.form_message_not_found
+      );
     }
 
     await formMessage.edit({
       embeds: [
-        EmbedBuilder.from(formMessage.embeds.shift())
-          .setTitle(`[ZAAKCEPTOWANE] ${formMessage.embeds.shift().title}`)
+        EmbedBuilder.from(formMessage.embeds[0])
+          .setTitle(`[ZAAKCEPTOWANE] ${formMessage.embeds[0].data.title}`)
           .setColor(0x64eb04),
       ],
       components: [],
@@ -79,10 +86,12 @@ module.exports = {
 
     const logChannelResult = await recruitmentLogSchema.findOne();
     if (!logChannelResult) {
-      console.log('no log channel, skipping logging (dz)');
+      console.log(
+        msg.events.interactions.modalSubmits.db_log_channel_not_found
+      );
     } else {
       try {
-        const logChannel = interaction.guild.channels.fetch(
+        const logChannel = await interaction.guild.channels.fetch(
           logChannelResult.channelId
         );
         await logChannel.send({
@@ -93,7 +102,7 @@ module.exports = {
           ],
         });
       } catch {
-        console.log('log channel not found, skipping logging (dz)');
+        console.log(msg.events.interactions.modalSubmits.log_channel_not_found);
       }
     }
 
@@ -110,7 +119,7 @@ module.exports = {
         components: [embed.interactions.modalSubmits.user_accept_row],
       });
     } catch {
-      console.log('cant send message to user');
+      console.log(msg.events.interactions.modalSubmits.user_send_err);
     }
 
     await formsSchema.deleteOne({

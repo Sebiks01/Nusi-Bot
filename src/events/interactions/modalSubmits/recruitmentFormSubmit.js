@@ -78,8 +78,7 @@ module.exports = {
       );
     } catch {
       return await interaction.editReply({
-        content:
-          'nie ustawiono kanału podań lub został on usunięty (do zmiany)',
+        embeds: [embed.interactions.modalSubmits.missing_recruitment_channel],
         ephemeral: true,
       });
     }

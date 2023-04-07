@@ -17,8 +17,6 @@ module.exports = {
     if (!interaction.isButton() || interaction.customId !== 'form-accept')
       return;
 
-    await interaction.deferReply({ ephemeral: true });
-
     const results = await recruitmentModsSchema.find();
 
     for (const result of results) {
@@ -39,7 +37,7 @@ module.exports = {
       }
     }
 
-    await interaction.editReply({
+    await interaction.reply({
       embeds: [embed.misc.recruitment_no_access],
       ephemeral: true,
     });
