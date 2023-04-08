@@ -15,12 +15,10 @@ module.exports = {
   async execute(message, _) {
     if (!message.inGuild()) return;
 
-    const result1 = await formsSchema.findOne({ messageId: message.id });
-    if (result1) await formsSchema.deleteOne(result1.id);
+    await formsSchema.deleteOne({ messageId: message.id });
 
-    const result2 = await recrruitmentMessagesSchema.findOne({
+    await recrruitmentMessagesSchema.deleteOne({
       messageId: message.id,
     });
-    if (result2) await recrruitmentMessagesSchema.deleteOne(result2.id);
   },
 };

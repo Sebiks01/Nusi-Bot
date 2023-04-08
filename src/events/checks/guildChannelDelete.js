@@ -17,23 +17,18 @@ module.exports = {
   async execute(channel, _) {
     if (channel.type !== ChannelType.GuildText) return;
 
-    const results1 = await formsSchema.find({ channelId: channel.id });
-    if (results1.length != 0) await formsSchema.deleteMany(results1);
+    await formsSchema.deleteMany({ channelId: channel.id });
 
-    const result2 = await recruitmentChannelSchema.findOne({
+    await recruitmentChannelSchema.deleteOne({
       channelId: channel.id,
     });
-    if (result2) await recruitmentChannelSchema.deleteOne(result2.id);
 
-    const result3 = await recruitmentLogSchema.findOne({
+    await recruitmentLogSchema.deleteOne({
       channelId: channel.id,
     });
-    if (result3) await recruitmentLogSchema.deleteOne(result3.id);
 
-    const results4 = await recruitmentMessagesSchema.find({
+    await recruitmentMessagesSchema.deleteMany({
       channelId: channel.id,
     });
-    if (results4.length != 0)
-      await recruitmentMessagesSchema.deleteMany(results4);
   },
 };

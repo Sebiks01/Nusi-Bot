@@ -13,13 +13,10 @@ module.exports = {
    */
 
   async execute(role, _) {
-    const results1 = await recruitmentBlacklistsSchema.find({
+    await recruitmentBlacklistsSchema.deleteMany({
       roleId: role.id,
     });
-    if (results1.length !== 0)
-      await recruitmentBlacklistsSchema.deleteMany(results1);
 
-    const results2 = await recruitmentModsSchema.find({ roleId: role.id });
-    if (results2.length !== 0) await recruitmentModsSchema.deleteMany(results2);
+    await recruitmentModsSchema.deleteMany({ roleId: role.id });
   },
 };
