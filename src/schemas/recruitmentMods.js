@@ -8,7 +8,7 @@ const reqString = {
 
 const schema = new Schema(
   {
-    roleId: reqString
+    roleId: reqString,
   },
   {
     timestamps: true,
@@ -17,4 +17,4 @@ const schema = new Schema(
 
 const name = 'recruitmentMods';
 
-module.exports = mongoose.models[name] || mongoose.model(name, schema);
+module.exports = mongoose.models[name] || mongoose.model(name, schema, name);

@@ -18,4 +18,4 @@ const schema = new Schema(
 
 const name = 'recruitmentMessages';
 
-module.exports = mongoose.models[name] || mongoose.model(name, schema);
+module.exports = mongoose.models[name] || mongoose.model(name, schema, name);
