@@ -87,7 +87,7 @@ module.exports = {
     /* ---------------------------- recruitmentBlacklist.js --------------------------- */
     recruitment_blacklist_add_success: createEmbed(
       'REKRUTACJA',
-      'Rola została dodana do czarnej listy do rekrutacji!`',
+      'Rola została dodana do czarnej listy do rekrutacji!',
       0x12e507
     ),
     recruitment_blacklist_remove_success: createEmbed(
