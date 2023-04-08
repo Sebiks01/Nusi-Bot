@@ -4,6 +4,7 @@ const {
   ChatInputCommandInteraction,
   Client,
   AutocompleteInteraction,
+  EmbedBuilder,
 } = require('discord.js');
 
 const recruitmentModsSchema = require('../../schemas/recruitmentMods.js');
@@ -105,7 +106,7 @@ module.exports = {
 
         if (!result) {
           await interaction.editReply({
-            content: 'An error has occurred. Please contact an administrator!',
+            content: 'Nie ma takiego podania',
             ephemeral: true,
           });
 
@@ -139,7 +140,7 @@ module.exports = {
         }
 
         await formsSchema.deleteOne({
-          userId: userId,
+          userId: user.id,
         });
 
         const logChannelResult = await recruitmentLogSchema.findOne();
