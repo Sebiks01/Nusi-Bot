@@ -27,7 +27,7 @@ client.commands = new Collection();
 client.events = new Collection();
 
 // Creating a new collection of developers
-client.devs = ['793780954803601429'];
+client.devs = ['793780954803601429', '904341940139606057'];
 
 // Connecting to the database
 mongoConnect();
