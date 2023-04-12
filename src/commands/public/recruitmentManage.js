@@ -114,7 +114,20 @@ module.exports = {
 
         if (!result) {
           await interaction.editReply({
-            content: 'Nie ma takiego podania (dz)',
+            embeds: [
+              new EmbedBuilder()
+                .setTitle('BŁĄD!')
+                .setDescription('Podanie nie zostało znalezione!')
+                .setColor(0xe30b0b)
+                .setThumbnail(
+                  'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=699&height=675'
+                )
+                .setFooter({
+                  text: 'NUSI.PL',
+                  iconURL:
+                    'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=699&height=675',
+                }),
+            ],
             ephemeral: true,
           });
 
