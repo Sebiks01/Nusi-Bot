@@ -4,10 +4,10 @@ const {
   ChatInputCommandInteraction,
   Client,
 } = require('discord.js');
+const chalk = require('chalk');
 
 const { loadCommands } = require('../../handlers/commandsHandler.js');
 const { loadEvents } = require('../../handlers/eventsHandler.js');
-const msg = require('../../config/messages.js');
 
 // Command object
 module.exports = {
@@ -40,7 +40,7 @@ module.exports = {
         loadCommands(client);
 
         interaction.reply({
-          content: msg.util_cmds.cmds_reload,
+          content: 'Reloaded commands.',
           ephemeral: true,
         });
 
@@ -58,7 +58,7 @@ module.exports = {
         loadEvents(client);
 
         interaction.reply({
-          content: msg.util_cmds.events_reload,
+          content: 'Reloaded Events.',
           ephemeral: true,
         });
 
@@ -68,11 +68,16 @@ module.exports = {
       // Checking for an internal error
       default: {
         interaction.reply({
-          content: msg.util_cmds.err_reply,
+          content:
+            'An internal error has occured, contact an administrator immediately!',
           ephemeral: true,
         });
 
-        console.log(msg.util_cmds.err_log);
+        console.log(
+          chalk.yellow(
+            '[WARN] Error in the "reload" command: Invalid subcommand.'
+          )
+        );
 
         break;
       }

@@ -1,9 +1,15 @@
-const { ModalSubmitInteraction, Client, Events } = require('discord.js');
+const {
+  ModalSubmitInteraction,
+  Client,
+  Events,
+  EmbedBuilder,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+} = require('discord.js');
 
 const formsSchema = require('../../../schemas/forms.js');
 const recruitmentChannelSchema = require('../../../schemas/recruitmentChannel.js');
-
-const embed = require('../../../config/embedsAndComponents.js');
 
 module.exports = {
   name: Events.InteractionCreate,
@@ -38,23 +44,34 @@ module.exports = {
       const message = await channel.send({
         content: `<@${interaction.user.id}>`,
         embeds: [
-          embed.interactions.modalSubmits.form_embed
-            .setTitle(
-              embed.interactions.modalSubmits.form_embed.data.title.replace(
-                /{USER_TAG}/g,
-                interaction.user.tag
-              )
-            )
+          new EmbedBuilder()
+            .setTitle(`Podanie gracza ${interaction.user.tag}`)
             .setDescription(
-              embed.interactions.modalSubmits.form_embed.data.description
-                .replace(/{ANSWER_1}/g, answers.answer1)
-                .replace(/{ANSWER_2}/g, answers.answer2)
-                .replace(/{ANSWER_3}/g, answers.answer3)
-                .replace(/{ANSWER_4}/g, answers.answer4)
-                .replace(/{ANSWER_5}/g, answers.answer5)
-            ),
+              `**1.** Czy spełniasz wszystkie wymagania?\n\`\`\`${answers.answer1}\`\`\`\n\n**2.** Jaki masz nick w Minecraft?\n\`\`\`${answers.answer2}\`\`\`\n\n**3.** Opisz siebie (min 3 rozbudowane zdania).\n\`\`\`${answers.answer3}\`\`\`\n\n**4.** Dlaczego właśnie ciebie mam wybrać?\n\`\`\`${answers.answer4}\`\`\`\n\n**5.** Co chciałbyś zmienić na serwerze?\n\`\`\`${answers.answer5}\`\`\``
+            )
+            .setColor(0xebcc04)
+            .setThumbnail(
+              'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=700&height=676'
+            )
+            .setFooter({
+              text: 'NUSI.PL',
+              iconURL:
+                'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=699&height=675',
+            }),
         ],
-        components: [embed.interactions.modalSubmits.form_row],
+        components: [
+          new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+              .setCustomId('form-accept')
+              .setStyle(ButtonStyle.Success)
+              .setEmoji('✔'),
+
+            new ButtonBuilder()
+              .setCustomId('form-reject')
+              .setStyle(ButtonStyle.Danger)
+              .setEmoji('❌')
+          ),
+        ],
       });
 
       await formsSchema.findOneAndUpdate(
@@ -78,14 +95,49 @@ module.exports = {
       );
     } catch {
       return await interaction.editReply({
-        embeds: [embed.interactions.modalSubmits.missing_recruitment_channel],
+        embeds: [
+          new EmbedBuilder()
+            .setTitle('⛔️ BŁĄD')
+            .setDescription(
+              'Kanał nie został utworzony lub został on usunięty! Nie można wysłać formularza!'
+            )
+            .setColor(0xff0707)
+            .setFooter({
+              text: 'NUSI.PL',
+              iconURL:
+                'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=699&height=675',
+            }),
+        ],
         ephemeral: true,
       });
     }
 
     await interaction.editReply({
-      embeds: [embed.interactions.modalSubmits.form_submit_reply],
-      components: [embed.interactions.modalSubmits.form_submit_row],
+      embeds: [
+        new EmbedBuilder()
+          .setTitle('📩 TWOJE PODANIE ZOSTAŁO WYSŁANE')
+          .setDescription(
+            'Rekrutacja została pomyślnie przesłana! Sprawdź kanał <#1091502812401250405> oraz oczekuj wyników w wiadomości prywatnej od <@1009158071467126855>!'
+          )
+          .setColor(0x0acb00)
+          .setImage(
+            'https://media.discordapp.net/attachments/1038820694642937936/1092161241658691624/REKRUTACJA_1.png?width=1320&height=550'
+          )
+          .setFooter({
+            text: 'NUSI.PL',
+            iconURL:
+              'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=699&height=675',
+          }),
+      ],
+      components: [
+        new ActionRowBuilder().addComponents(
+          new ButtonBuilder()
+            .setCustomId('do-nothing-button')
+            .setLabel('DZIĘKI ZA TĄ INFORMACJE, CZEKAM!')
+            .setStyle(ButtonStyle.Secondary)
+            .setEmoji('❤')
+        ),
+      ],
       ephemeral: true,
     });
   },

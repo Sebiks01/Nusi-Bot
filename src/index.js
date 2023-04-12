@@ -1,11 +1,17 @@
-const { Client, GatewayIntentBits, Partials, Collection } = require('discord.js');
+const {
+  Client,
+  GatewayIntentBits,
+  Partials,
+  Collection,
+} = require('discord.js');
+const chalk = require('chalk');
 require('dotenv/config.js');
 
 const { loadEvents } = require('./handlers/eventsHandler.js');
 const { mongoConnect } = require('./util/mongoConnect.js');
-const msg = require('./config/messages.js')
 
-const { Guilds, GuildMembers, GuildMessages, MessageContent } = GatewayIntentBits;
+const { Guilds, GuildMembers, GuildMessages, MessageContent } =
+  GatewayIntentBits;
 const { User, Message, GuildMember } = Partials;
 
 // Creating the client
@@ -31,6 +37,6 @@ loadEvents(client);
 
 // Login to client
 client.login(process.env.TOKEN).catch((err) => {
-  console.log(msg.main.invalid_token);
+  console.log(chalk.red('[ERROR] Inavlid token provided.'));
   console.log(err);
 });

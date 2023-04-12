@@ -1,8 +1,6 @@
 const { glob } = require('glob');
 const path = require('path');
-
-const msg = require('../config/messages.js');
-
+const chalk = require('chalk');
 
 // Deleting cached files function
 async function deleteCachedFile(file) {
@@ -39,7 +37,9 @@ async function loadFiles(dirName) {
     return jsFiles;
   } catch (err) {
     // Logging error if occured
-    console.log(msg.util.file_load_err.replace(/{DIR_NAME}/g, dirName));
+    console.log(
+      chalk.red(`[ERROR] Error loading files from directory "${dirName}".`)
+    );
 
     console.log(err);
   }

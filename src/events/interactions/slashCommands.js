@@ -1,6 +1,5 @@
 const { ChatInputCommandInteraction, Client, Events } = require('discord.js');
-
-const msg = require('../../config/messages.js');
+const chalk = require('chalk');
 
 // Event object
 module.exports = {
@@ -24,14 +23,11 @@ module.exports = {
       // Checking if the command exists
       if (!command) {
         console.log(
-          msg.events.interactions.outdated_cmd_log.replace(
-            /{CMD_NAME}/g,
-            interaction.commandName
-          )
+          chalk.yellow(`[WARN] Command ${interaction.commandName} is outdated.`)
         );
 
         return interaction.reply({
-          content: msg.events.interactions.outdated_cmd,
+          content: 'This command is outdated.',
           ephemeral: true,
         });
       }
@@ -39,7 +35,7 @@ module.exports = {
       // Checking if the command is developer only and the user isn't a developer
       if (command.dev && !client.devs.includes(interaction.user.id)) {
         return interaction.reply({
-          content: msg.events.interactions.dev_only_cmd,
+          content: 'This command is only available to the developer.',
           ephemeral: true,
         });
       }
@@ -53,17 +49,18 @@ module.exports = {
       // Checking if the command exists
       if (!command)
         return console.log(
-          msg.events.interactions.outdated_cmd_log.replace(
-            /{CMD_NAME}/g,
-            interaction.commandName
-          )
+          chalk.yellow(`[WARN] Command ${interaction.commandName} is outdated.`)
         );
 
       // Executing autocomplete for the command
       try {
         await command.autocomplete(interaction, client);
       } catch (err) {
-        console.log('error with autocomplete in command xyz (dz)');
+        console.log(
+          chalk.yellow(
+            `[WARN] Error with autocomplete in ${interaction.commandName} command.`
+          )
+        );
         console.log(err);
       }
     }

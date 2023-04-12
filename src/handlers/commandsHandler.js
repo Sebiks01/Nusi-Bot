@@ -1,12 +1,12 @@
+const chalk = require('chalk');
+
 const { loadFiles } = require('../util/fileLoader.js');
-const msg = require('../config/messages.js')
-const path = require('../config/paths.js')
 
 async function loadCommands(client) {
-  console.log(msg.handlers.load_cmds_start);
+  console.log(chalk.blue('[INFO] Loading commands...'));
 
   // Logging commands loading time
-  console.time(msg.handlers.load_cmds_time);
+  console.time(chalk.green('[INFO] Loaded commands in'));
 
   // Creating a new client commands map
   client.commands = new Map();
@@ -15,7 +15,7 @@ async function loadCommands(client) {
   const applicationCommands = new Array();
 
   // Loading commands files
-  const files = await loadFiles(path.commands);
+  const files = await loadFiles('src/commands');
 
   // Loooping through commands files
   for (const file of files) {
@@ -29,16 +29,18 @@ async function loadCommands(client) {
       applicationCommands.push(command.data.toJSON());
 
       // Adding event to events array
-      commands.push({ Command: command.data.name, Status: msg.handlers.cmds_table_success_emoji });
+      commands.push({ Command: command.data.name, Status: '✅' });
     } catch (err) {
       // Adding errored event file to events array
       commands.push({
         Command: file.split('/').pop().slice(0, -3),
-        Status: msg.handlers.cmds_table_error_emoji,
+        Status: '🛑',
       });
 
       console.log(
-        msg.handlers.cmd_load_err.replace(/{CMD_NAME}/g, file.split('/').pop().slice(0, -3))
+        chalk.yellow(
+          `[WARN] Error in command "${file.split('/').pop().slice(0, -3)}".`
+        )
       );
       console.log(err);
     }
@@ -48,7 +50,7 @@ async function loadCommands(client) {
 
   // Logging commands array as a table
   console.table(commands);
-  console.timeEnd(msg.handlers.load_cmds_time);
+  console.timeEnd(chalk.green('[INFO] Loaded commands in'));
 }
 
 module.exports = { loadCommands };

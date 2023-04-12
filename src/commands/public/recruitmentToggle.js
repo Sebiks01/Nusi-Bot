@@ -3,11 +3,14 @@ const {
   PermissionFlagsBits,
   ChatInputCommandInteraction,
   Client,
+  EmbedBuilder,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
 } = require('discord.js');
+const chalk = require('chalk');
 
 const recruitmentMessagesSchema = require('../../schemas/recruitmentMessages');
-const embed = require('../../config/embedsAndComponents.js');
-const msg = require('../../config/messages');
 
 // Command object
 module.exports = {
@@ -66,13 +69,46 @@ module.exports = {
             }
 
             await message.edit({
-              embeds: [embed.pub_cmds.recruitment_embed_init],
-              components: [embed.pub_cmds.recruitment_on_row],
+              embeds: [
+                new EmbedBuilder()
+                  .setTitle('REKRUTACJA DO ADMINISTRACJI SERWERA NUSI.PL')
+                  .setDescription(
+                    '**WYMAGANIA REKRUTACYJNE!**\n> - 14 lat\n> - Minecraft Premium\n> - Znajomość ortografii oraz interpunkcji.\n> - Dobra opinia wśród innych graczy oraz administracji.\n> - Aktywność na serwerze Minecraft oraz na Discord! (12h tygodniowo na serwerze minecraft oraz podstawowa aktywność na discord czyli odpowiadnie na tickety, kanały pomocy itp.)\n> - Kultura osobista\n\n**PYTANIA REKRUTACYJNE!**\n> 1. Czy spełniasz **wszystkie** podane wymagania?\n> 2. Jaki masz nick w **Minecraft**\n> 3. Opisz siebie w minimum **3 rozbudowanych zdaniach** (Imie, wiek, zainteresowania, doświadczenie w pełnieniu funkcji minecraft)\n> 4. Jak oceniasz swoje umiejętności **komunikacji** z innymi? Czy inne osoby odbierają ciebie przyjaźnie? (1-10)\n> 5. Co chciałbyś aby zostało **zmienione** na serwerze?\n\nWszystkie podania po zakończeniu zostają wysłane na kanał <#1091502812401250405>, można napisać tylko jedno podanie do czasu'
+                  )
+                  .setColor(0x0acb00)
+                  .setImage(
+                    'https://media.discordapp.net/attachments/1038820694642937936/1092149856442793984/REKRUTACJA.png?width=1320&height=550'
+                  )
+                  .setFooter({
+                    text: 'NUSI.PL',
+                    iconURL:
+                      'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=699&height=675',
+                  }),
+              ],
+              components: [
+                new ActionRowBuilder().addComponents(
+                  new ButtonBuilder()
+                    .setCustomId('recruitment-form-init')
+                    .setLabel('KLIKNIJ ABY NAPISAĆ PODANIE')
+                    .setStyle(ButtonStyle.Success)
+                    .setEmoji('📝')
+                ),
+              ],
             });
           }
 
           await interaction.editReply({
-            embeds: [embed.pub_cmds.recruitment_on_reply],
+            embeds: [
+              new EmbedBuilder()
+                .setTitle('STATUS REKRUTACJI')
+                .setDescription('✔️ Rekrutacja została włączona!')
+                .setColor(0x0acb00)
+                .setFooter({
+                  text: 'NUSI.PL',
+                  iconURL:
+                    'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=699&height=675',
+                }),
+            ],
             ephemeral: true,
           });
 
@@ -100,13 +136,47 @@ module.exports = {
             }
 
             await message.edit({
-              embeds: [embed.pub_cmds.recruitment_embed_init],
-              components: [embed.pub_cmds.recruitment_off_row],
+              embeds: [
+                new EmbedBuilder()
+                  .setTitle('REKRUTACJA DO ADMINISTRACJI SERWERA NUSI.PL')
+                  .setDescription(
+                    '**WYMAGANIA REKRUTACYJNE!**\n> - 14 lat\n> - Minecraft Premium\n> - Znajomość ortografii oraz interpunkcji.\n> - Dobra opinia wśród innych graczy oraz administracji.\n> - Aktywność na serwerze Minecraft oraz na Discord! (12h tygodniowo na serwerze minecraft oraz podstawowa aktywność na discord czyli odpowiadnie na tickety, kanały pomocy itp.)\n> - Kultura osobista\n\n**PYTANIA REKRUTACYJNE!**\n> 1. Czy spełniasz **wszystkie** podane wymagania?\n> 2. Jaki masz nick w **Minecraft**\n> 3. Opisz siebie w minimum **3 rozbudowanych zdaniach** (Imie, wiek, zainteresowania, doświadczenie w pełnieniu funkcji minecraft)\n> 4. Jak oceniasz swoje umiejętności **komunikacji** z innymi? Czy inne osoby odbierają ciebie przyjaźnie? (1-10)\n> 5. Co chciałbyś aby zostało **zmienione** na serwerze?\n\nWszystkie podania po zakończeniu zostają wysłane na kanał <#1091502812401250405>, można napisać tylko jedno podanie do czasu'
+                  )
+                  .setColor(0x0acb00)
+                  .setImage(
+                    'https://media.discordapp.net/attachments/1038820694642937936/1092149856442793984/REKRUTACJA.png?width=1320&height=550'
+                  )
+                  .setFooter({
+                    text: 'NUSI.PL',
+                    iconURL:
+                      'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=699&height=675',
+                  }),
+              ],
+              components: [
+                new ActionRowBuilder().addComponents(
+                  new ButtonBuilder()
+                    .setCustomId('recruitment-form-init')
+                    .setLabel('KLIKNIJ ABY NAPISAĆ PODANIE')
+                    .setStyle(ButtonStyle.Success)
+                    .setEmoji('📝')
+                    .setDisabled(true)
+                ),
+              ],
             });
           }
 
           await interaction.editReply({
-            embeds: [embed.pub_cmds.recruitment_off_reply],
+            embeds: [
+              new EmbedBuilder()
+                .setTitle('STATUS REKRUTACJI')
+                .setDescription('❌ Rekrutacja została wyłączona!')
+                .setColor(0xed0303)
+                .setFooter({
+                  text: 'NUSI.PL',
+                  iconURL:
+                    'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=699&height=675',
+                }),
+            ],
             ephemeral: true,
           });
 
@@ -114,7 +184,9 @@ module.exports = {
         }
       }
     } catch (err) {
-      console.log(msg.pub_cmds.recruitment_toggle_err);
+      console.log(
+        chalk.yellow('[WARN] Error in the "recruitment-toggle" command.')
+      );
       console.log(err);
 
       await interaction.editReply({

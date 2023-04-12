@@ -3,12 +3,14 @@ const {
   Client,
   Events,
   EmbedBuilder,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
 } = require('discord.js');
+const chalk = require('chalk');
 
 const recruitmentLogSchema = require('../../../schemas/recruitmentLog.js');
 const formsSchema = require('../../../schemas/forms.js');
-const embed = require('../../../config/embedsAndComponents.js');
-const msg = require('../../../config/messages.js');
 
 module.exports = {
   name: Events.InteractionCreate,
@@ -43,7 +45,9 @@ module.exports = {
       });
 
       return console.log(
-        msg.events.interactions.modalSubmits.db_form_not_found
+        chalk.yellow(
+          '[WARN] Error in "formAccept.js". Form not found in databse.'
+        )
       );
     }
 
@@ -58,7 +62,7 @@ module.exports = {
       });
 
       return console.log(
-        msg.events.interactions.modalSubmits.form_channel_not_found
+        chalk.yellow('[WARN] Error in "formAccept.js". Form channel not found.')
       );
     }
 
@@ -71,7 +75,7 @@ module.exports = {
       });
 
       return console.log(
-        msg.events.interactions.modalSubmits.form_message_not_found
+        chalk.yellow('[WARN] Error in "formAccept.js". Form message not found.')
       );
     }
 
@@ -87,7 +91,9 @@ module.exports = {
     const logChannelResult = await recruitmentLogSchema.findOne();
     if (!logChannelResult) {
       console.log(
-        msg.events.interactions.modalSubmits.db_log_channel_not_found
+        chalk.yellow(
+          '[WARN] Error in "formAccept.js". Log channel not found in databse.'
+        )
       );
     } else {
       try {
@@ -102,24 +108,48 @@ module.exports = {
           ],
         });
       } catch {
-        console.log(msg.events.interactions.modalSubmits.log_channel_not_found);
+        console.log(
+          chalk.yellow(
+            '[WARN] Error in "formAccept.js". Log channel not found.'
+          )
+        );
       }
     }
 
     try {
       await user.send({
         embeds: [
-          embed.interactions.modalSubmits.user_accept_embed.setDescription(
-            embed.interactions.modalSubmits.user_accept_embed.data.description.replace(
-              /{REASON}/g,
-              reason
+          new EmbedBuilder()
+            .setTitle('🟢 TWOJE PODANIE ZOSTAŁO ZAAKCEPTOWANE!')
+            .setDescription(
+              `Zostajesz przyjęty na **DRUGI ETAP REKRUTACJI** do naszej administracji!\n\n**POWÓD:**\n\`\`\`${reason}\`\`\`\nSkontaktuj się w tickecie w ciągu **48h** od otrzymania tej wiadomości aby otrzymać termin drugiego etapu, jeżeli nie otworzysz ticketa w ciągu wyznaczonego czasu zostajesz automatycznie usunięty z listy osób do rekrutacji! 😱\n`
             )
+            .setColor(0x20e506)
+            .setThumbnail(
+              'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=700&height=676'
+            )
+            .setFooter({
+              text: 'NUSI.PL',
+              iconURL:
+                'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=699&height=675',
+            }),
+        ],
+        components: [
+          new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+              .setCustomId('do-nothing-button')
+              .setLabel('OKEJ, ROZUMIEM!')
+              .setStyle(ButtonStyle.Success)
+              .setEmoji('👋')
           ),
         ],
-        components: [embed.interactions.modalSubmits.user_accept_row],
       });
     } catch {
-      console.log(msg.events.interactions.modalSubmits.user_send_err);
+      console.log(
+        chalk.yellow(
+          '[WARN] Error in "formAccept.js/formReject.js". Cant send message to user.'
+        )
+      );
     }
 
     await formsSchema.deleteOne({
@@ -128,12 +158,18 @@ module.exports = {
 
     await interaction.editReply({
       embeds: [
-        embed.interactions.modalSubmits.accept_reply.setDescription(
-          embed.interactions.modalSubmits.accept_reply.data.description.replace(
-            /{USER_TAG}/g,
-            user.tag
+        new EmbedBuilder()
+          .setTitle('✔️ PODANIE ZAAKCEPTOWANE')
+          .setDescription(`Podanie gracza ${user.tag} zostało zaakceptowane!`)
+          .setColor(0x1fe315)
+          .setThumbnail(
+            'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=700&height=676'
           )
-        ),
+          .setFooter({
+            text: 'NUSI.PL',
+            iconURL:
+              'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=699&height=675',
+          }),
       ],
       ephemeral: true,
     });

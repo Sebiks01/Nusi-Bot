@@ -4,11 +4,11 @@ const {
   ChatInputCommandInteraction,
   Client,
   ChannelType,
+  EmbedBuilder,
 } = require('discord.js');
+const chalk = require('chalk');
 
 const recruitmentLogSchema = require('../../schemas/recruitmentLog');
-const embed = require('../../config/embedsAndComponents.js');
-const msg = require('../../config/messages');
 
 // Command object
 module.exports = {
@@ -58,11 +58,25 @@ module.exports = {
       }
 
       await interaction.editReply({
-        embeds: [embed.pub_cmds.recruitment_log_setchannel],
+        embeds: [
+          new EmbedBuilder()
+            .setTitle('✔️ KANAŁ LOGÓW ZOSTAŁ USTAWIONY')
+            .setDescription(
+              'Od teraz wszystkie odrzucone/zaakceptowane podania będą wysyłane na ten kanał.'
+            )
+            .setColor(0xe7b707)
+            .setFooter({
+              text: 'NUSI.PL',
+              iconURL:
+                'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=699&height=675',
+            }),
+        ],
         ephemeral: true,
       });
     } catch (err) {
-      console.log(msg.pub_cmds.recruitment_log_err);
+      console.log(
+        chalk.yellow('[WARN] Error in the "recruitment-log" command.')
+      );
       console.log(err);
 
       await interaction.editReply({

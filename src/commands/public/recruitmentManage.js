@@ -5,13 +5,15 @@ const {
   Client,
   AutocompleteInteraction,
   EmbedBuilder,
+  ButtonBuilder,
+  ActionRowBuilder,
+  ButtonStyle,
 } = require('discord.js');
+const chalk = require('chalk');
 
 const recruitmentModsSchema = require('../../schemas/recruitmentMods.js');
 const recruitmentLogSchema = require('../../schemas/recruitmentLog');
 const formsSchema = require('../../schemas/forms.js');
-const embed = require('../../config/embedsAndComponents.js');
-const msg = require('../../config/messages');
 
 // Command object
 module.exports = {
@@ -67,11 +69,17 @@ module.exports = {
     let choices;
 
     if (focusedOption.name === 'accept-reason') {
-      choices = msg.pub_cmds.accept_reason_autocomplete;
+      choices = [
+        'Twoje podanie zostało zaakceptowane, zgłoś się w tickecie w celu przeprowadzenia 2 etapu.',
+      ];
     }
 
     if (focusedOption.name === 'reject-reason') {
-      choices = msg.pub_cmds.reject_reason_autocomplete;
+      choices = [
+        'Nie spełniasz wymagań.',
+        'Podanie posiada błędy ortograficzne.',
+        'Byłeś zbyt często karany.',
+      ];
     }
 
     const filtered = choices.filter((choice) =>
@@ -106,11 +114,15 @@ module.exports = {
 
         if (!result) {
           await interaction.editReply({
-            content: 'Nie ma takiego podania',
+            content: 'Nie ma takiego podania (dz)',
             ephemeral: true,
           });
 
-          return console.log(msg.pub_cmds.db_form_not_found);
+          return console.log(
+            chalk.yellow(
+              '[WARN] Error in "recruitmentManage.js". Form not found in databse.'
+            )
+          );
         }
 
         let formChannel, formMessage;
@@ -125,7 +137,11 @@ module.exports = {
             ephemeral: true,
           });
 
-          return console.log(msg.pub_cmds.form_channel_not_found);
+          return console.log(
+            chalk.yellow(
+              '[WARN] Error in "recruitmentManage.js". Form channel not found.'
+            )
+          );
         }
 
         try {
@@ -136,7 +152,11 @@ module.exports = {
             ephemeral: true,
           });
 
-          return console.log(msg.pub_cmds.form_message_not_found);
+          return console.log(
+            chalk.yellow(
+              '[WARN] Error in "recruitmentManage.js". Form message not found.'
+            )
+          );
         }
 
         await formsSchema.deleteOne({
@@ -159,7 +179,11 @@ module.exports = {
             });
 
             if (!logChannelResult) {
-              console.log(msg.pub_cmds.db_log_channel_not_found);
+              console.log(
+                chalk.yellow(
+                  '[WARN] Error in "recruitmentManage.js". Log channel not found in databse.'
+                )
+              );
             } else {
               try {
                 const logChannel = await interaction.guild.channels.fetch(
@@ -174,34 +198,66 @@ module.exports = {
                   ],
                 });
               } catch {
-                console.log(msg.pub_cmds.log_channel_not_found);
+                console.log(
+                  chalk.yellow(
+                    '[WARN] Error in "recruitmentManage.js". Log channel not found.'
+                  )
+                );
               }
             }
 
             try {
               await user.send({
                 embeds: [
-                  embed.interactions.modalSubmits.user_accept_embed.setDescription(
-                    embed.interactions.modalSubmits.user_accept_embed.data.description.replace(
-                      /{REASON}/g,
-                      reason
+                  new EmbedBuilder()
+                    .setTitle('🟢 TWOJE PODANIE ZOSTAŁO ZAAKCEPTOWANE!')
+                    .setDescription(
+                      `Zostajesz przyjęty na **DRUGI ETAP REKRUTACJI** do naszej administracji!\n\n**POWÓD:**\n\`\`\`${reason}\`\`\`\nSkontaktuj się w tickecie w ciągu **48h** od otrzymania tej wiadomości aby otrzymać termin drugiego etapu, jeżeli nie otworzysz ticketa w ciągu wyznaczonego czasu zostajesz automatycznie usunięty z listy osób do rekrutacji! 😱\n`
                     )
+                    .setColor(0x20e506)
+                    .setThumbnail(
+                      'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=700&height=676'
+                    )
+                    .setFooter({
+                      text: 'NUSI.PL',
+                      iconURL:
+                        'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=699&height=675',
+                    }),
+                ],
+                components: [
+                  new ActionRowBuilder().addComponents(
+                    new ButtonBuilder()
+                      .setCustomId('do-nothing-button')
+                      .setLabel('OKEJ, ROZUMIEM!')
+                      .setStyle(ButtonStyle.Success)
+                      .setEmoji('👋')
                   ),
                 ],
-                components: [embed.interactions.modalSubmits.user_accept_row],
               });
             } catch {
-              console.log(msg.pub_cmds.user_send_err);
+              console.log(
+                chalk.yellow(
+                  '[WARN] Error in "recruitmentManage.js". Cant send message to user.'
+                )
+              );
             }
 
             return await interaction.editReply({
               embeds: [
-                embed.interactions.modalSubmits.accept_reply.setDescription(
-                  embed.interactions.modalSubmits.accept_reply.data.description.replace(
-                    /{USER_TAG}/g,
-                    user.tag
+                new EmbedBuilder()
+                  .setTitle('✔️ PODANIE ZAAKCEPTOWANE')
+                  .setDescription(
+                    `Podanie gracza ${user.tag} zostało zaakceptowane!`
                   )
-                ),
+                  .setColor(0x1fe315)
+                  .setThumbnail(
+                    'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=700&height=676'
+                  )
+                  .setFooter({
+                    text: 'NUSI.PL',
+                    iconURL:
+                      'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=699&height=675',
+                  }),
               ],
               ephemeral: true,
             });
@@ -211,7 +267,11 @@ module.exports = {
             await formMessage.delete();
 
             if (!logChannelResult) {
-              console.log(msg.pub_cmds.db_log_channel_not_found);
+              console.log(
+                chalk.yellow(
+                  '[WARN] Error in "recruitmentManage.js". Log channel not found in databse.'
+                )
+              );
             } else {
               try {
                 const logChannel = await interaction.guild.channels.fetch(
@@ -225,34 +285,66 @@ module.exports = {
                   ],
                 });
               } catch {
-                console.log(msg.pub_cmds.log_channel_not_found);
+                console.log(
+                  chalk.yellow(
+                    '[WARN] Error in "recruitmentManage.js". Log channel not found.'
+                  )
+                );
               }
             }
 
             try {
               await user.send({
                 embeds: [
-                  embed.interactions.modalSubmits.user_reject_embed.setDescription(
-                    embed.interactions.modalSubmits.user_reject_embed.data.description.replace(
-                      /{REASON}/g,
-                      reason
+                  new EmbedBuilder()
+                    .setTitle('🔴 TWOJE PODANIE ZOSTAŁO ODRZUCONE!')
+                    .setDescription(
+                      `Niestety nie udało się tobie przejść do **2 ETAPU REKRUTACJI** :sob:\n\n**POWÓD:**\n\`\`\`${reason}\`\`\`\nNie matrw się! Kolejnym razem napewno się uda!\n:dart: **Próba jest matką sukcesu** \n`
                     )
+                    .setColor(0xe50606)
+                    .setThumbnail(
+                      'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=700&height=676'
+                    )
+                    .setFooter({
+                      text: 'NUSI.PL',
+                      iconURL:
+                        'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=699&height=675',
+                    }),
+                ],
+                components: [
+                  new ActionRowBuilder().addComponents(
+                    new ButtonBuilder()
+                      .setCustomId('do-nothing-button')
+                      .setLabel('DO KOLEJNEGO!')
+                      .setStyle(ButtonStyle.Danger)
+                      .setEmoji('👋')
                   ),
                 ],
-                components: [embed.interactions.modalSubmits.user_reject_row],
               });
             } catch {
-              console.log(msg.pub_cmds.user_send_err);
+              console.log(
+                chalk.yellow(
+                  '[WARN] Error in "recruitmentManage.js". Cant send message to user.'
+                )
+              );
             }
 
             return await interaction.editReply({
               embeds: [
-                embed.interactions.modalSubmits.reject_reply.setDescription(
-                  embed.interactions.modalSubmits.reject_reply.data.description.replace(
-                    /{USER_TAG}/g,
-                    user.tag
+                new EmbedBuilder()
+                  .setTitle('❌ PODANIE ODRZUCONE')
+                  .setDescription(
+                    `Podanie gracza ${user.tag} zostało odrzucone!`
                   )
-                ),
+                  .setColor(0xf10303)
+                  .setThumbnail(
+                    'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=700&height=676'
+                  )
+                  .setFooter({
+                    text: 'NUSI.PL',
+                    iconURL:
+                      'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=699&height=675',
+                  }),
               ],
               ephemeral: true,
             });
@@ -262,7 +354,22 @@ module.exports = {
     }
 
     await interaction.editReply({
-      embeds: [embed.misc.recruitment_no_access],
+      embeds: [
+        new EmbedBuilder()
+          .setTitle('⛔️ BŁĄD')
+          .setDescription(
+            'Komenda nie jest dostępna dla ciebie ponieważ nie jesteś **MODERATOREM REKRUTACJI**.'
+          )
+          .setColor(0xf10303)
+          .setThumbnail(
+            'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=700&height=676'
+          )
+          .setFooter({
+            text: 'NUSI.PL',
+            iconURL:
+              'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=699&height=675',
+          }),
+      ],
       ephemeral: true,
     });
   },

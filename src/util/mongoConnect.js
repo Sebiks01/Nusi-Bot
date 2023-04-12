@@ -1,24 +1,29 @@
 const mongoose = require('mongoose');
-
-const msg = require('../config/messages.js');
+const chalk = require('chalk');
 
 const mongoConnect = async () => {
   // Creating and returning a new database connection
-  console.log(msg.util.db_conn_start);
+  console.log(chalk.blue('[INFO] Connecting to the database...'));
 
   return await new Promise((resolve) => {
     mongoose
       .connect(process.env.MONGO_URI)
       .then((mongoose) => {
-        console.log(msg.util.db_conn_success);
         console.log(
-          msg.util.db_conn_id.replace(/{DB_CONN_ID}/g, mongoose.connection.id)
+          chalk.green('[INFO] Successfully connected to the database.')
+        );
+        console.log(
+          chalk.blue(`[INFO] Connection ID: ${mongoose.connection.id}`)
         );
 
         resolve(mongoose);
       })
       .catch((err) => {
-        console.log(msg.util.db_conn_err);
+        console.log(
+          chalk.yellow(
+            '[WARN] Invalid mongo uri provided. Aborting connection.'
+          )
+        );
         console.log(err);
       });
   });

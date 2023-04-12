@@ -3,12 +3,14 @@ const {
   Client,
   Events,
   EmbedBuilder,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
 } = require('discord.js');
+const chalk = require('chalk');
 
 const recruitmentLogSchema = require('../../../schemas/recruitmentLog.js');
 const formsSchema = require('../../../schemas/forms.js');
-const embed = require('../../../config/embedsAndComponents.js');
-const msg = require('../../../config/messages.js');
 
 module.exports = {
   name: Events.InteractionCreate,
@@ -43,7 +45,9 @@ module.exports = {
       });
 
       return console.log(
-        msg.events.interactions.modalSubmits.db_form_not_found
+        chalk.yellow(
+          '[WARN] Error in "formReject.js". Form not found in databse.'
+        )
       );
     }
 
@@ -58,7 +62,7 @@ module.exports = {
       });
 
       return console.log(
-        msg.events.interactions.modalSubmits.form_channel_not_found
+        chalk.yellow('[WARN] Error in "formReject.js". Form channel not found.')
       );
     }
 
@@ -71,7 +75,7 @@ module.exports = {
       });
 
       return console.log(
-        msg.events.interactions.modalSubmits.form_message_not_found
+        chalk.yellow('[WARN] Error in "formReject.js". Form message not found.')
       );
     }
 
@@ -80,7 +84,9 @@ module.exports = {
     const logChannelResult = await recruitmentLogSchema.findOne();
     if (!logChannelResult) {
       console.log(
-        msg.events.interactions.modalSubmits.db_log_channel_not_found
+        chalk.yellow(
+          '[WARN] Error in "formReject.js". Log channel not found in databse.'
+        )
       );
     } else {
       try {
@@ -95,24 +101,48 @@ module.exports = {
           ],
         });
       } catch {
-        console.log(msg.events.interactions.modalSubmits.log_channel_not_found);
+        console.log(
+          chalk.yellow(
+            '[WARN] Error in "formReject.js". Log channel not found.'
+          )
+        );
       }
     }
 
     try {
       await user.send({
         embeds: [
-          embed.interactions.modalSubmits.user_reject_embed.setDescription(
-            embed.interactions.modalSubmits.user_reject_embed.data.description.replace(
-              /{REASON}/g,
-              reason
+          new EmbedBuilder()
+            .setTitle('🔴 TWOJE PODANIE ZOSTAŁO ODRZUCONE!')
+            .setDescription(
+              `Niestety nie udało się tobie przejść do **2 ETAPU REKRUTACJI** :sob:\n\n**POWÓD:**\n\`\`\`${reason}\`\`\`\nNie matrw się! Kolejnym razem napewno się uda!\n:dart: **Próba jest matką sukcesu** \n`
             )
+            .setColor(0xe50606)
+            .setThumbnail(
+              'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=700&height=676'
+            )
+            .setFooter({
+              text: 'NUSI.PL',
+              iconURL:
+                'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=699&height=675',
+            }),
+        ],
+        components: [
+          new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+              .setCustomId('do-nothing-button')
+              .setLabel('DO KOLEJNEGO!')
+              .setStyle(ButtonStyle.Danger)
+              .setEmoji('👋')
           ),
         ],
-        components: [embed.interactions.modalSubmits.user_reject_row],
       });
     } catch {
-      console.log(msg.events.interactions.modalSubmits.user_send_err);
+      console.log(
+        chalk.yellow(
+          '[WARN] Error in "formReject.js". Cant send message to user.'
+        )
+      );
     }
 
     await formsSchema.deleteOne({
@@ -121,12 +151,18 @@ module.exports = {
 
     await interaction.editReply({
       embeds: [
-        embed.interactions.modalSubmits.reject_reply.setDescription(
-          embed.interactions.modalSubmits.reject_reply.data.description.replace(
-            /{USER_TAG}/g,
-            user.tag
+        new EmbedBuilder()
+          .setTitle('❌ PODANIE ODRZUCONE')
+          .setDescription(`Podanie gracza ${user.tag} zostało odrzucone!`)
+          .setColor(0xf10303)
+          .setThumbnail(
+            'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=700&height=676'
           )
-        ),
+          .setFooter({
+            text: 'NUSI.PL',
+            iconURL:
+              'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=699&height=675',
+          }),
       ],
       ephemeral: true,
     });

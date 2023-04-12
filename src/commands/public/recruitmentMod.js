@@ -3,11 +3,11 @@ const {
   PermissionFlagsBits,
   ChatInputCommandInteraction,
   Client,
+  EmbedBuilder,
 } = require('discord.js');
+const chalk = require('chalk');
 
 const recruitmentModsSchema = require('../../schemas/recruitmentMods');
-const embed = require('../../config/embedsAndComponents.js');
-const msg = require('../../config/messages');
 
 // Command object
 module.exports = {
@@ -58,13 +58,40 @@ module.exports = {
         case 'add': {
           if (result)
             return await interaction.editReply({
-              embeds: [embed.pub_cmds.recruitment_mod_already_added],
+              embeds: [
+                new EmbedBuilder()
+                  .setTitle('⛔️ BŁĄD')
+                  .setDescription(
+                    'Ta ranga została już ustawiona jako moderator rekrutacji!'
+                  )
+                  .setColor(0xf10303)
+                  .setThumbnail(
+                    'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=700&height=676'
+                  )
+                  .setFooter({
+                    text: 'NUSI.PL',
+                    iconURL:
+                      'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=699&height=675',
+                  }),
+              ],
               ephemeral: true,
             });
 
           await recruitmentModsSchema.create({ roleId: role.id });
           await interaction.editReply({
-            embeds: [embed.pub_cmds.recruitment_mod_add_success],
+            embeds: [
+              new EmbedBuilder()
+                .setTitle('MODERATOR REKRUTACJI')
+                .setDescription(
+                  '✔️ Ranga została dodana jako **MODERATOR REKRUTACJI**!'
+                )
+                .setColor(0x1bed03)
+                .setFooter({
+                  text: 'NUSI.PL',
+                  iconURL:
+                    'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=699&height=675',
+                }),
+            ],
             ephemeral: true,
           });
 
@@ -74,13 +101,38 @@ module.exports = {
         case 'remove': {
           if (!result)
             return await interaction.editReply({
-              embeds: [embed.pub_cmds.recruitment_mod_not_found],
+              embeds: [
+                new EmbedBuilder()
+                  .setTitle('MODERATOR REKRUTACJI')
+                  .setDescription('Nie ma tej rangi moderatora w bazie danych!')
+                  .setColor(0xf10303)
+                  .setThumbnail(
+                    'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=700&height=676'
+                  )
+                  .setFooter({
+                    text: 'NUSI.PL',
+                    iconURL:
+                      'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=699&height=675',
+                  }),
+              ],
               ephemeral: true,
             });
 
           await recruitmentModsSchema.deleteOne({ roleId: role.id });
           await interaction.editReply({
-            embeds: [embed.pub_cmds.recruitment_mod_remove_success],
+            embeds: [
+              new EmbedBuilder()
+                .setTitle('MODERATOR REKRUTACJI')
+                .setDescription(
+                  '❌ Ranga została usunięta jako **MODERATOR REKRUTACJI**!'
+                )
+                .setColor(0xff0909)
+                .setFooter({
+                  text: 'NUSI.PL',
+                  iconURL:
+                    'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=699&height=675',
+                }),
+            ],
             ephemeral: true,
           });
 
@@ -88,7 +140,9 @@ module.exports = {
         }
       }
     } catch (err) {
-      console.log(msg.pub_cmds.recruitment_mod_err);
+      console.log(
+        chalk.yellow('[WARN] Error in the "recruitment-mod" command.')
+      );
       console.log(err);
 
       await interaction.editReply({

@@ -1,6 +1,6 @@
 const { Client, Events } = require('discord.js');
+const chalk = require('chalk');
 
-const msg = require('../../config/messages.js')
 const { loadCommands } = require('../../handlers/commandsHandler.js');
 
 // Event object
@@ -15,7 +15,7 @@ module.exports = {
 
   execute(client) {
     // Logging that the client is ready
-    console.log(msg.events.client.client_ready);
+    console.log(chalk.green('[INFO] The client is now ready.'));
 
     // Loading client commands
     loadCommands(client);

@@ -1,7 +1,14 @@
-const { ButtonInteraction, Client, Events } = require('discord.js');
+const {
+  ButtonInteraction,
+  Client,
+  Events,
+  EmbedBuilder,
+  ModalBuilder,
+  TextInputStyle,
+  ActionRowBuilder,
+  TextInputBuilder,
+} = require('discord.js');
 
-const embed = require('../../../config/embedsAndComponents.js');
-const reasonModals = require('../../../config/reasonModals.js');
 const recruitmentModsSchema = require('../../../schemas/recruitmentMods.js');
 
 module.exports = {
@@ -25,20 +32,42 @@ module.exports = {
         const user = await client.users.fetch(userId);
 
         return await interaction.showModal(
-          reasonModals.form_accept
-            .setTitle(
-              reasonModals.form_accept.data.title.replace(
-                /{USER_TAG}/g,
-                user.tag
+          new ModalBuilder()
+            .setTitle(`Podanie ${user.tag}`)
+            .setCustomId(`form-acceptreason-${user.id}`)
+            .addComponents(
+              new ActionRowBuilder().addComponents(
+                new TextInputBuilder()
+                  .setCustomId('accept-reason')
+                  .setLabel('Powód akceptacji:')
+                  .setPlaceholder('Spełnia wymagania.')
+                  .setStyle(TextInputStyle.Short)
+                  .setRequired(true)
+                  .setMaxLength(100)
+                  .setMinLength(5)
               )
             )
-            .setCustomId(`form-acceptreason-${user.id}`)
         );
       }
     }
 
     await interaction.reply({
-      embeds: [embed.misc.recruitment_no_access],
+      embeds: [
+        new EmbedBuilder()
+          .setTitle('⛔️ BŁĄD')
+          .setDescription(
+            'Komenda nie jest dostępna dla ciebie ponieważ nie jesteś **MODERATOREM REKRUTACJI**.'
+          )
+          .setColor(0xf10303)
+          .setThumbnail(
+            'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=700&height=676'
+          )
+          .setFooter({
+            text: 'NUSI.PL',
+            iconURL:
+              'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=699&height=675',
+          }),
+      ],
       ephemeral: true,
     });
   },

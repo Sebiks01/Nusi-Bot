@@ -4,11 +4,11 @@ const {
   ChatInputCommandInteraction,
   Client,
   ChannelType,
+  EmbedBuilder,
 } = require('discord.js');
+const chalk = require('chalk');
 
 const recruitmentChannelSchema = require('../../schemas/recruitmentChannel.js');
-const embed = require('../../config/embedsAndComponents.js');
-const msg = require('../../config/messages');
 
 // Command object
 module.exports = {
@@ -50,11 +50,23 @@ module.exports = {
       );
 
       await interaction.editReply({
-        embeds: [embed.pub_cmds.recruitment_channel_set],
+        embeds: [
+          new EmbedBuilder()
+            .setTitle('KANAŁ PODAŃ')
+            .setDescription('Pomyślnie ustawiono kanał publicznych podań!')
+            .setColor(0x16e532)
+            .setFooter({
+              text: 'NUSI.PL',
+              iconURL:
+                'https://media.discordapp.net/attachments/1038820694642937936/1090016809865986231/nusilogo.png?width=699&height=675',
+            }),
+        ],
         ephemeral: true,
       });
     } catch (err) {
-      console.log(msg.pub_cmds.recruitment_channel_err);
+      console.log(
+        chalk.yellow('[WARN] Error in the "recruitment-channel" command.')
+      );
       console.log(err);
 
       await interaction.editReply({
