@@ -10,13 +10,19 @@ require('dotenv/config.js');
 const { loadEvents } = require('./handlers/eventsHandler.js');
 const { mongoConnect } = require('./util/mongoConnect.js');
 
-const { Guilds, GuildMembers, GuildMessages, MessageContent } =
+const { Guilds, GuildMembers, GuildMessages, MessageContent, GuildPresences } =
   GatewayIntentBits;
 const { User, Message, GuildMember } = Partials;
 
 // Creating the client
 const client = new Client({
-  intents: [Guilds, GuildMembers, GuildMessages, MessageContent],
+  intents: [
+    Guilds,
+    GuildMembers,
+    GuildMessages,
+    MessageContent,
+    GuildPresences,
+  ],
   partials: [User, Message, GuildMember],
 });
 
@@ -28,6 +34,9 @@ client.events = new Collection();
 
 // Creating a new collection of developers
 client.devs = ['793780954803601429', '904341940139606057'];
+
+client.statusesRoleId = '1094989603905208432';
+client.statusesGuildId = '949266894588874782';
 
 // Connecting to the database
 mongoConnect();
