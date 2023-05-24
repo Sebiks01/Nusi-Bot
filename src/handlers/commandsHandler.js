@@ -46,8 +46,6 @@ async function loadCommands(client) {
     }
   }
 
-  console.log(applicationCommands);
-
   client.application.commands.set(applicationCommands);
 
   // Logging commands array as a table
