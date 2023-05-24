@@ -10,8 +10,14 @@ require('dotenv/config.js');
 const { loadEvents } = require('./handlers/eventsHandler.js');
 const { mongoConnect } = require('./util/mongoConnect.js');
 
-const { Guilds, GuildMembers, GuildMessages, MessageContent, GuildPresences } =
-  GatewayIntentBits;
+const {
+  Guilds,
+  GuildMembers,
+  GuildMessages,
+  MessageContent,
+  GuildPresences,
+  GuildMessageReactions,
+} = GatewayIntentBits;
 const { User, Message, GuildMember } = Partials;
 
 // Creating the client
@@ -22,6 +28,7 @@ const client = new Client({
     GuildMessages,
     MessageContent,
     GuildPresences,
+    GuildMessageReactions,
   ],
   partials: [User, Message, GuildMember],
 });

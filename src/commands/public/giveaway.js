@@ -39,6 +39,8 @@ module.exports = {
   async execute(interaction, client) {
     if (!interaction.guild) return;
 
+    await interaction.deferReply();
+
     const messageId = interaction.options.getString('message-id');
     const winnersCount = interaction.options.getNumber('winners-count');
     const message = interaction.options.getString('message');
@@ -54,26 +56,24 @@ module.exports = {
     }
 
     const reactions = giveawayMessage.reactions.cache;
-    const participants = [];
-    const winners = [];
+    let participants = new Array();
 
-    reactions.forEach((reaction) => {
-      users = reaction.users.cache;
+    for (const reaction of reactions.values()) {
+      const users = await reaction.users.fetch();
 
-      users.forEach((user) =>
-        participants.indexOf(user.id) === -1 ? participants.push(user.id) : null
-      );
-    });
-
-    for (let i = 0; i < winnersCount; i++) {
-      const winner =
-        participants[Math.floor(Math.random() * participants.length)];
-
-      winners.push(winner);
-      participants.splice(participants.indexOf(winner), 1);
+      for (const user of users.values()) {
+        if (participants.indexOf(user.id) !== -1 || user.bot) continue;
+        participants.push(user.id);
+      }
     }
 
-    for (const winner of winners) {
+    for (let i = 0; i < winnersCount; i++) {
+      if (participants.length === 0) break;
+
+      const winner =
+        participants[Math.floor(Math.random() * participants.length)];
+      participants.splice(participants.indexOf(winner), 1);
+
       const winnerTag = (await client.users.fetch(winner)).tag;
 
       const embed = new EmbedBuilder()
@@ -84,5 +84,7 @@ module.exports = {
         embeds: [embed],
       });
     }
+
+    interaction.deleteReply();
   },
 };
