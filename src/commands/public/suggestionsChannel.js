@@ -41,7 +41,7 @@ module.exports = {
       });
     }
 
-    suggestionsChannelSchema.findOneAndUpdate(
+    await suggestionsChannelSchema.findOneAndUpdate(
       {},
       {
         channelId: channel.id,
