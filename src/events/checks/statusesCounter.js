@@ -32,14 +32,17 @@ module.exports = {
 
       for (const member of guild.members.cache.values()) {
         if (
-          !member.presence?.activities.length === 0 ||
-          !member.presence.activities[0].type !== ActivityType.Custom ||
+          !member.presence ||
+          member.presence?.activities.length === 0 ||
+          member.presence.activities[0].type !== ActivityType.Custom ||
           !member.presence.activities[0].state
         ) {
           if (member.roles.cache.has(client.statusesRoleId))
             try {
               await member.roles.remove(client.statusesRoleId);
             } catch {}
+
+          continue;
         }
 
         if (checkStatus(member.presence.activities[0].state)) {
