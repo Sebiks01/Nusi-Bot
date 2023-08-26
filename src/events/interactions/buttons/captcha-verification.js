@@ -12,18 +12,16 @@ module.exports = {
    */
 
   async execute(interaction, client) {
-    if (!interaction.isButton() || interaction.customId.startsWith('captcha-'))
+    if (!interaction.isButton() || !interaction.customId.startsWith('captcha-'))
       return;
 
-    await interaction.deferReply({
-      ephemeral: true,
-    });
+    await interaction.deferReply({ ephemeral: true });
 
     const status = interaction.customId.split('-')[1];
 
     if (status == 'success') {
       await interaction.editReply({
-        content: 'Verification successful.',
+        content: 'Weryfikacja została pomyślnie ukończona!',
         ephemeral: true,
       });
 
@@ -37,15 +35,13 @@ module.exports = {
         );
       }
     } else {
-    await verificationCooldownsSchema.create({ 
+      await verificationCooldownsSchema.create({
         userId: interaction.user.id,
-        cooldown: Date.now() + 1000 * 5,
-     })
-
-      await interaction.message.delete();
+        expires: Date.now() + 1000 * 10,
+      });
 
       await interaction.editReply({
-        content: 'Weryfikacja nie powiodła się.',
+        content: 'Weryfikacja nie powiodła się! Spróbuj ponownie!',
         ephemeral: true,
       });
     }

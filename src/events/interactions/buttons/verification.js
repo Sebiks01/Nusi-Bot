@@ -36,10 +36,11 @@ function generateButtons(userId) {
     const randomStyle = Math.floor(Math.random() * styles.length);
     const randomIcon = Math.floor(Math.random() * icons.length);
 
-    const buttton = { s: styles[randomStyle], i: icons[randomIcon] };
+    const button = { s: styles[randomStyle], i: icons[randomIcon] };
 
-    if (buttons.includes(buttton)) continue;
-    buttons.push();
+    if (buttons.some((b) => JSON.stringify(b) == JSON.stringify(button)))
+      continue;
+    buttons.push(button);
   }
 
   const customIds = [];
@@ -52,12 +53,12 @@ function generateButtons(userId) {
       continue;
     }
 
-    customIds.push(`captcha-fail-${userId}`);
+    customIds.push(`captcha-fail-${userId}-${customIds.length}`);
   }
 
   return {
     buttons,
-    cutomIds,
+    customIds,
     successStyle: {
       pl: buttons[randomSuccess].s.pl,
       en: buttons[randomSuccess].s.en,
@@ -81,9 +82,7 @@ module.exports = {
   async execute(interaction, _) {
     if (!interaction.isButton() || interaction.customId !== 'verify') return;
 
-    await interaction.deferReply({
-      ephemeral: true,
-    });
+    await interaction.deferReply({ ephemeral: true });
 
     const cooldown = await verificationCooldownsSchema.findOne({
       userId: interaction.user.id,
@@ -93,7 +92,7 @@ module.exports = {
       const timeLeft = cooldown.expires - Date.now();
 
       if (timeLeft > 0) {
-        return interaction.editReply({
+        return await interaction.editReply({
           content: `Musisz poczekać jeszcze ${Math.floor(timeLeft / 1000)}s.`,
           ephemeral: true,
         });
@@ -126,7 +125,7 @@ module.exports = {
       components.push(row);
     }
 
-    interaction.editReply({
+    await interaction.editReply({
       content: `🇵🇱  Zweryfikuj się klikając **${buttons.successStyle.pl}** przycisk z **${buttons.successIcon.pl}**!\n🇬🇧  Verify yourself by clicking the **${buttons.successStyle.en}** button with a **${buttons.successIcon.en}**!`,
       components: components,
       ephemeral: true,
