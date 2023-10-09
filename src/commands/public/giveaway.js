@@ -29,6 +29,12 @@ module.exports = {
         .setName('message')
         .setDescription('The message to be displayed.')
         .setRequired(true)
+    )
+    .addRoleOption((option) =>
+      option
+        .setName('role')
+        .setDescription('State a winning only role.')
+        .setRequired(false)
     ),
   /**
    *
@@ -44,6 +50,7 @@ module.exports = {
     const messageId = interaction.options.getString('message-id');
     const winnersCount = interaction.options.getNumber('winners-count');
     const message = interaction.options.getString('message');
+    const role = interaction.options.getRole('role');
 
     const giveawayMessage = await interaction.channel.messages.fetch(messageId);
     if (!giveawayMessage) {
@@ -63,6 +70,9 @@ module.exports = {
 
       for (const user of users.values()) {
         if (participants.indexOf(user.id) !== -1 || user.bot) continue;
+
+        if (role && !user.roles.cache.has(role.id)) continue;
+
         participants.push(user.id);
       }
     }
