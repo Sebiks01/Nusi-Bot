@@ -94,10 +94,10 @@ module.exports = {
   /**
    *
    * @param { ChatInputCommandInteraction } interaction
-   * @param { Client } _
+   * @param { Client } client
    */
 
-  async execute(interaction, _) {
+  async execute(interaction, client) {
     await interaction.deferReply({ ephemeral: true });
 
     const results = await recruitmentModsSchema.find();
@@ -255,7 +255,7 @@ module.exports = {
               );
             }
 
-            return await interaction.editReply({
+            await interaction.editReply({
               embeds: [
                 new EmbedBuilder()
                   .setTitle('✔️ PODANIE ZAAKCEPTOWANE')
@@ -274,6 +274,18 @@ module.exports = {
               ],
               ephemeral: true,
             });
+
+            try {
+              await interaction.guild.members.fetch(user.id).then((member) => {
+                member.roles.add(client.recruitmentRoleId);
+              });
+            } catch {
+              console.log(
+                chalk.yellow(
+                  '[WARN] Error in "recruitmentManage.js". Cant add role to user.'
+                )
+              );
+            }
           }
 
           case 'reject': {

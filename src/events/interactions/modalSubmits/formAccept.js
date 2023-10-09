@@ -173,5 +173,17 @@ module.exports = {
       ],
       ephemeral: true,
     });
+
+    try {
+      await interaction.guild.members.fetch(userId).then((member) => {
+        member.roles.add(client.recruitmentRoleId);
+      });
+    } catch {
+      console.log(
+        chalk.yellow(
+          '[WARN] Error in "formAccept.js". Recruitment role not found.'
+        )
+      );
+    }
   },
 };

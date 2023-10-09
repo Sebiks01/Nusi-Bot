@@ -42,9 +42,10 @@ client.events = new Collection();
 // Creating a new collection of developers
 client.devs = ['793780954803601429', '904341940139606057'];
 
-client.statusesRoleId = '1094989603905208432';
-client.statusesGuildId = '949266894588874782';
+client.statusesRoleId = '';
+client.statusesGuildId = '';
 client.verificationRoleId = '';
+client.recruitmentRoleId = '';
 
 // Connecting to the database
 mongoConnect();
