@@ -71,7 +71,11 @@ module.exports = {
       for (const user of users.values()) {
         if (participants.indexOf(user.id) !== -1 || user.bot) continue;
 
-        if (role && !user.roles.cache.has(role.id)) continue;
+        if (role) {
+          const member = await interaction.guild.members.fetch(user.id);
+
+          if (!member.roles.cache.has(role.id)) continue;
+        }
 
         participants.push(user.id);
       }
