@@ -13,6 +13,6 @@ module.exports = {
     if (!interaction.isButton() || interaction.customId !== 'do-nothing-button')
       return;
 
-    await interaction.deleteReply();
+    await interaction.deferUpdate();
   },
 };

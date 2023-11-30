@@ -65,6 +65,8 @@ module.exports = {
     const reactions = giveawayMessage.reactions.cache;
     let participants = new Array();
 
+    const members = await interaction.guild.members.fetch();
+
     for (const reaction of reactions.values()) {
       const users = await reaction.users.fetch();
 
@@ -72,9 +74,9 @@ module.exports = {
         if (participants.indexOf(user.id) !== -1 || user.bot) continue;
 
         if (role) {
-          const member = await interaction.guild.members.fetch(user.id);
+          if (!members.has(user.id)) continue;
 
-          if (!member.roles.cache.has(role.id)) continue;
+          if (!members.get(user.id).roles.cache.has(role.id)) continue;
         }
 
         participants.push(user.id);
